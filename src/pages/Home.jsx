@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 
 import { setCategory } from '../redux/slices/filterSlice';
 import { Categories } from '../components/Categories';
@@ -10,26 +11,22 @@ import { Pagination } from '../components/Pagination';
 
 export const Home = () => {
   const { category, sort } = useSelector((state) => state.filterSlice);
-
   const dispatch = useDispatch();
 
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
 
-  // const [category, setCategory] = useState(0);
-  // const [sort, setSort] = useState({ name: 'популярности', sort: 'rating' });
-
   useEffect(() => {
     setIsLoading(true);
-    fetch(
-      `https://62c5781fa361f725128546fb.mockapi.io/items?page=${page}&limit=4&${
-        category > 0 ? `category=${category}` : ''
-      }&sortBy=${sort.sort}&order=desc`,
-    )
-      .then((res) => res.json())
+    axios
+      .get(
+        `https:62c5781fa361f725128546fb.mockapi.io/items?page=${page}&limit=4&${
+          category > 0 ? `category=${category}` : ''
+        }&sortBy=${sort.sort}&order=desc`,
+      )
       .then((res) => {
-        setData(res);
+        setData(res.data);
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
