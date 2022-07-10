@@ -15,21 +15,26 @@ export const Home = () => {
 
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get(
+  const fetchPizzas = async () => {
+    try {
+      setIsLoading(true);
+      const res = await axios.get(
         `https:62c5781fa361f725128546fb.mockapi.io/items?page=${pageCount}&limit=4&${
           category > 0 ? `category=${category}` : ''
         }&sortBy=${sort.sort}&order=desc`,
-      )
-      .then((res) => {
-        setData(res.data);
-        setIsLoading(false);
-      });
+      );
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
     window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    fetchPizzas();
   }, [category, sort.sort, pageCount]);
 
   const onChangeCategory = (i) => {
