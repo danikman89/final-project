@@ -4,6 +4,7 @@ const initialState = {
   category: 0,
   sort: { name: 'популярности', sort: 'rating' },
   pageCount: 1,
+  searchValue: '',
 };
 
 export const filterSlice = createSlice({
@@ -12,6 +13,9 @@ export const filterSlice = createSlice({
   reducers: {
     setCategory(state, action) {
       state.category = action.payload;
+    },
+    setSearchValue(state, action) {
+      state.search = action.payload;
     },
     setSort(state, action) {
       state.sort = action.payload;
@@ -23,6 +27,6 @@ export const filterSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setCategory, setSort, setPageCount } = filterSlice.actions;
+export const { setCategory, setSort, setPageCount, setSearchValue } = filterSlice.actions;
 
 export default filterSlice.reducer;

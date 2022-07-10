@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
 
+import { fetchPizzas } from '../redux/slices/pizzaSlice';
 import { setCategory, setPageCount } from '../redux/slices/filterSlice';
 import { Categories } from '../components/Categories';
 import { Sort } from '../components/Sort';
@@ -11,30 +11,22 @@ import { Pagination } from '../components/Pagination';
 
 export const Home = () => {
   const { category, sort, pageCount } = useSelector((state) => state.filterSlice);
+  const { items, status } = useSelector((state) => state.pizzaSlice);
   const dispatch = useDispatch();
 
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchPizzas = async () => {
-    try {
-      setIsLoading(true);
-      const res = await axios.get(
-        `https:62c5781fa361f725128546fb.mockapi.io/items?page=${pageCount}&limit=4&${
-          category > 0 ? `category=${category}` : ''
-        }&sortBy=${sort.sort}&order=desc`,
-      );
-      setData(res.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-    window.scrollTo(0, 0);
+  const getPizzas = async () => {
+    dispatch(
+      fetchPizzas({
+        pageCount,
+        sort,
+        category,
+      }),
+    );
+    window.scroll(0, 0);
   };
 
   useEffect(() => {
-    fetchPizzas();
+    getPizzas();
   }, [category, sort.sort, pageCount]);
 
   const onChangeCategory = (i) => {
@@ -44,7 +36,6 @@ export const Home = () => {
   const onChangePage = (num) => {
     dispatch(setPageCount(num));
   };
-
   return (
     <>
       <div className="content__top">
@@ -53,9 +44,9 @@ export const Home = () => {
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
-        {isLoading
+        {status === 'loading'
           ? [...new Array(4)].map((_, i) => <Skeleton key={i} />)
-          : data.map((items) => <PizzaBlock key={items.id} {...items} />)}
+          : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
       </div>
       <Pagination pageCount={pageCount} onChangePage={onChangePage} />
     </>
